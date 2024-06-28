@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -45,6 +46,7 @@ import com.example.sampleapp.feature.components.common.CustomizedTextField
 import com.example.sampleapp.feature.components.common.DishRatingWidget
 import com.example.sampleapp.feature.components.common.MenuIcon
 import com.example.sampleapp.feature.components.common.RoundedButton
+import com.example.sampleapp.navigation.CartScreenRoute
 import com.example.sampleapp.navigation.FoodDetailScreenRoute
 import com.example.sampleapp.ui.theme.backgroundColor
 import com.example.sampleapp.ui.theme.cardColor
@@ -178,6 +180,8 @@ fun HomeScreen(navController: NavController) {
                 items(10) {
                     FoodDishCard(onClick = {
                         navController.navigate(FoodDetailScreenRoute)
+                    },onCartClick={
+                        navController.navigate(CartScreenRoute)
                     })
                 }
             }
@@ -314,6 +318,8 @@ fun HomeScreen() {
                 items(10) {
                     FoodDishCard(onClick = {
 
+                    },onCartClick={
+
                     })
                 }
             }
@@ -323,13 +329,13 @@ fun HomeScreen() {
 
 
 @Composable
-fun FoodDishCard(modifier: Modifier = Modifier,onClick: () -> Unit) {
+fun FoodDishCard(modifier: Modifier = Modifier,onClick: () -> Unit,onCartClick: () -> Unit) {
     Surface(
         color = Color.White, shape = RoundedCornerShape(20.dp), modifier = Modifier
             .padding(0.dp)
             .then(
                 Modifier
-                    .padding(10.dp)
+                    .padding(10.dp).clip(RoundedCornerShape(10.dp))
                     .clickable {
                         onClick.invoke()
                     })
@@ -429,7 +435,7 @@ fun FoodDishCard(modifier: Modifier = Modifier,onClick: () -> Unit) {
                 colorFilter = ColorFilter.tint(color = Color.White),
                 menuColor = Color.Black,
                 size = 40.dp, onClick = {
-
+                    onCartClick.invoke()
                 }
             )
         }

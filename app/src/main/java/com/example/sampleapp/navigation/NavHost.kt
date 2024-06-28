@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.sampleapp.feature.ui.DishDetailScreen
 import com.example.sampleapp.feature.ui.HomeScreen
+import com.example.sampleapp.feature.ui.PaymentScreen
 import kotlinx.serialization.Serializable
 
 @Composable
@@ -26,7 +27,7 @@ fun NavGraph(modifier: Modifier = Modifier,controller: NavHostController) {
         }
 
         composable<CartScreenRoute>{
-            HomeScreen()
+            PaymentScreen(navController = controller)
         }
 
     }

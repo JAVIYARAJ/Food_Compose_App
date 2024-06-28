@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
@@ -59,7 +60,7 @@ fun MenuIcon(
     size: Dp = 50.dp,
     onClick: () -> Unit
 ) {
-    Surface(modifier = modifier.size(size).clickable {
+    Surface(modifier = modifier.size(size).clip(RoundedCornerShape(20.dp)).clickable {
         onClick.invoke()
     }, shape = RoundedCornerShape(50.dp), color = menuColor) {
         Image(painter = painterResource(id = menuIcon), contentDescription = contentDescription, contentScale = scaleType, colorFilter = colorFilter)

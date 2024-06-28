@@ -41,11 +41,100 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.sampleapp.R
 import com.example.sampleapp.feature.components.common.DishPriceIndicatorWidget
 import com.example.sampleapp.feature.components.common.ElevatedButtonWidget
 import com.example.sampleapp.feature.components.common.MenuIcon
 import com.example.sampleapp.ui.theme.backgroundColor
+
+@Composable
+fun PaymentScreen(modifier: Modifier = Modifier,navController: NavController) {
+
+    Scaffold(
+        topBar = {
+            Row(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(all = 10.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                MenuIcon(menuIcon = R.drawable.ic_back_icon, contentDescription = "back_icon", onClick = {
+                    navController.popBackStack()
+                })
+                Text(
+                    text = "Your cart food",
+                    style = TextStyle(color = Color.Black, fontSize = 18.sp),
+                    modifier = Modifier.weight(0.5f),
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                )
+                MenuIcon(menuIcon = R.drawable.ic_more_icon, contentDescription = "notification_icon", onClick = {
+
+                })
+            }
+        },
+        bottomBar = {
+            Surface(color = backgroundColor, shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp), shadowElevation = 10.dp, tonalElevation = 10.dp) {
+                Column {
+                    CartPromoCodeWidget(modifier = Modifier.padding(10.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = "Item total:", style = TextStyle(fontSize = 18.sp, color = Color.Gray))
+                        Text(text = "$20", style = TextStyle(fontSize = 20.sp, color = Color.Gray))
+
+                    }
+                    Spacer(modifier = Modifier.height(10.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp),
+                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = "Delivery:", style = TextStyle(fontSize = 18.sp, color = Color.Gray))
+                        Text(text = "Free", style = TextStyle(fontSize = 20.sp, color = Color.Gray))
+
+                    }
+
+                    Spacer(modifier = Modifier.height(20.dp))
+                    ElevatedCard(
+                        shape = RoundedCornerShape(20.dp), modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp), colors = CardDefaults.cardColors(containerColor = Color.Black)
+                    ) {
+                        Text(
+                            text = "Place Order",
+                            style = TextStyle(color = Color.White),
+                            modifier = Modifier
+                                .padding(horizontal = 30.dp, vertical = 15.dp)
+                                .fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+            }
+        }
+    ) { padding ->
+        LazyColumn(
+            modifier = Modifier
+                .padding(padding)
+                .then(Modifier.padding(horizontal = 10.dp))
+                .fillMaxSize()
+        ) {
+            items(10) {
+                CartDishItemWidget()
+            }
+        }
+
+    }
+}
 
 @Preview
 @Composable
@@ -135,6 +224,7 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
 
     }
 }
+
 
 @Preview
 @Composable
