@@ -6,6 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,6 +26,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -60,9 +62,12 @@ fun MenuIcon(
     size: Dp = 50.dp,
     onClick: () -> Unit
 ) {
-    Surface(modifier = modifier.size(size).clip(RoundedCornerShape(20.dp)).clickable {
-        onClick.invoke()
-    }, shape = RoundedCornerShape(50.dp), color = menuColor) {
+    Surface(modifier = modifier
+        .size(size)
+        .clip(RoundedCornerShape(20.dp))
+        .clickable {
+            onClick.invoke()
+        }, shape = RoundedCornerShape(50.dp), color = menuColor) {
         Image(painter = painterResource(id = menuIcon), contentDescription = contentDescription, contentScale = scaleType, colorFilter = colorFilter)
     }
 }
@@ -82,39 +87,45 @@ fun CustomizedTextField(
 
     val customShape: Shape = RoundedCornerShape(40.dp)
 
-    OutlinedTextField(modifier = modifier.border(BorderStroke(0.8.dp, color = Color.Gray), shape = customShape),
-        value = value,
-        onValueChange = onValueChange,
-        leadingIcon = leadingIcon,
-        placeholder = {
-            Text(text = hint, style = hintStyle)
-        },
-        shape = customShape,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = keyboardType,
-            imeAction = imeAction
-        ),
-        keyboardActions = KeyboardActions(
-            onGo = {
-                imeCallBack?.invoke()
+    Box {
+        OutlinedTextField(modifier = modifier.border(BorderStroke(0.8.dp, color = Color.Gray), shape = customShape),
+            value = value,
+            onValueChange = onValueChange,
+            leadingIcon = leadingIcon,
+            placeholder = {
+                Text(text = hint, style = hintStyle)
             },
-            onDone = {
-                imeCallBack?.invoke()
-            },
-            onSearch = {
-                imeCallBack?.invoke()
-            },
-            onNext = {
-                imeCallBack?.invoke()
-            },
-            onSend = {
-                imeCallBack?.invoke()
-            },
-            onPrevious = {
-                imeCallBack?.invoke()
-            }
+            shape = customShape,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = keyboardType,
+                imeAction = imeAction
+            ),
+            colors = TextFieldDefaults.colors(
+
+            ),
+            keyboardActions = KeyboardActions(
+                onGo = {
+                    imeCallBack?.invoke()
+                },
+                onDone = {
+                    imeCallBack?.invoke()
+                },
+                onSearch = {
+                    imeCallBack?.invoke()
+                },
+                onNext = {
+                    imeCallBack?.invoke()
+                },
+                onSend = {
+                    imeCallBack?.invoke()
+                },
+                onPrevious = {
+                    imeCallBack?.invoke()
+                }
+            )
         )
-    )
+    }
+
 }
 
 @Composable

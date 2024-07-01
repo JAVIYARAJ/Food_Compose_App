@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -43,6 +44,7 @@ import com.example.sampleapp.R
 import com.example.sampleapp.feature.components.common.DishPriceIndicatorWidget
 import com.example.sampleapp.feature.components.common.DishRatingWidget
 import com.example.sampleapp.feature.components.common.MenuIcon
+import com.example.sampleapp.ui.theme.selectedItemColor
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -112,6 +114,12 @@ fun DishDetailScreen(modifier: Modifier = Modifier,navController: NavController)
             }
         }
     ) { padding ->
+
+
+        val count = remember {
+            mutableIntStateOf(0)
+        }
+
         LazyColumn(
             flingBehavior = ScrollableDefaults.flingBehavior(),
             modifier = Modifier
@@ -184,9 +192,15 @@ fun DishDetailScreen(modifier: Modifier = Modifier,navController: NavController)
                 ) {
                     DishPriceIndicatorWidget(dishPrice = 24.0, fontSize = 25.sp)
                     Spacer(modifier = Modifier.weight(1f))
-                    DishItemCounterWidget(onClick = {
-                        increaseCounter(it)
-                    }, dishCount = dishCounter.intValue)
+                    DishItemCounterWidget(onClick = {flag->
+                        if(flag){
+                            count.intValue++
+                        }else{
+                            if(count.intValue!=0){
+                            count.intValue--
+                            }
+                        }
+                    }, dishCount = count.intValue)
                 }
 
             }
@@ -394,8 +408,8 @@ fun DishDetailScreen(modifier: Modifier = Modifier) {
 
 
 @Composable
-fun DishItemWidget(modifier: Modifier = Modifier, item: String, itemIcon: Int? = null) {
-    Surface(shape = RoundedCornerShape(10.dp), color = Color.White, modifier = Modifier.padding(5.dp)) {
+fun DishItemWidget(modifier: Modifier = Modifier, item: String, itemIcon: Int? = null,isSelected:Boolean=false) {
+    Surface(shape = RoundedCornerShape(10.dp), color =if(isSelected) selectedItemColor else Color.White, modifier = Modifier.padding(5.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(10.dp)) {
             if (itemIcon != null) {
                 Image(
@@ -406,7 +420,7 @@ fun DishItemWidget(modifier: Modifier = Modifier, item: String, itemIcon: Int? =
                 )
                 Spacer(modifier = Modifier.width(5.dp))
             }
-            Text(text = item)
+            Text(text = item, style = TextStyle(color = if(isSelected) Color.White else Color.Black))
         }
     }
 }
@@ -422,7 +436,7 @@ fun DishItemCounterWidget(modifier: Modifier = Modifier, onClick: (Boolean) -> U
                 painter = painterResource(id = R.drawable.ic_minus_icon),
                 contentDescription = "minus",
                 modifier = Modifier
-                    .size(15.dp)
+                    .size(15.dp).clip(RoundedCornerShape(20.dp))
                     .clickable {
                         onClick.invoke(false)
                     },
@@ -439,7 +453,7 @@ fun DishItemCounterWidget(modifier: Modifier = Modifier, onClick: (Boolean) -> U
                 painter = painterResource(id = R.drawable.ic_plus_icon),
                 contentDescription = "plus",
                 modifier = Modifier
-                    .size(15.dp)
+                    .size(15.dp).clip(RoundedCornerShape(20.dp))
                     .clickable {
                         onClick.invoke(true)
                     },

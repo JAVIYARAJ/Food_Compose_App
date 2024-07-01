@@ -1,4 +1,5 @@
 package com.example.sampleapp.feature.ui
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -41,13 +43,13 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.example.sampleapp.R
+import com.example.sampleapp.feature.components.common.BottomAppBar
 import com.example.sampleapp.feature.components.common.CustomAppBar
 import com.example.sampleapp.feature.components.common.CustomizedTextField
 import com.example.sampleapp.feature.components.common.DishRatingWidget
 import com.example.sampleapp.feature.components.common.MenuIcon
 import com.example.sampleapp.feature.components.common.RoundedButton
-import com.example.sampleapp.navigation.CartScreenRoute
-import com.example.sampleapp.navigation.FoodDetailScreenRoute
+import com.example.sampleapp.navigation.AppRoute
 import com.example.sampleapp.ui.theme.backgroundColor
 import com.example.sampleapp.ui.theme.cardColor
 
@@ -58,6 +60,17 @@ fun HomeScreen(navController: NavController) {
         topBar = {
             CustomAppBar()
         },
+        /*bottomBar = {
+            BottomAppBar(onIconTap = {item->
+                navController.navigate(item.route){
+                    popUpTo(navController.graph.startDestinationId) {
+                        saveState=true
+                    }
+                    launchSingleTop=true
+                    restoreState=true
+                }
+            }, navController = navController)
+        },*/
         containerColor = backgroundColor
     ) { padding ->
         Column(
@@ -179,9 +192,9 @@ fun HomeScreen(navController: NavController) {
             LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.fillMaxSize()) {
                 items(10) {
                     FoodDishCard(onClick = {
-                        navController.navigate(FoodDetailScreenRoute)
+                        navController.navigate(AppRoute.FoodDetailScreenRoute)
                     },onCartClick={
-                        navController.navigate(CartScreenRoute)
+                        navController.navigate(AppRoute.CartScreenRoute)
                     })
                 }
             }
@@ -207,7 +220,8 @@ fun HomeScreen() {
                 modifier = Modifier
                     .heightIn(max = 200.dp, min = 150.dp)
                     .padding(top = 10.dp)
-                    .fillMaxWidth(), colors = CardDefaults.cardColors().copy(containerColor = cardColor)
+                    .fillMaxWidth(), colors = CardDefaults.cardColors().copy(containerColor = cardColor),
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 5.dp)
             ) {
 
                 val constraint = ConstraintSet {
@@ -335,7 +349,8 @@ fun FoodDishCard(modifier: Modifier = Modifier,onClick: () -> Unit,onCartClick: 
             .padding(0.dp)
             .then(
                 Modifier
-                    .padding(10.dp).clip(RoundedCornerShape(10.dp))
+                    .padding(10.dp)
+                    .clip(RoundedCornerShape(10.dp))
                     .clickable {
                         onClick.invoke()
                     })
