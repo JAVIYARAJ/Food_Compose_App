@@ -3,6 +3,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -21,6 +22,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,159 +51,179 @@ import com.example.sampleapp.feature.components.common.BottomAppBar
 import com.example.sampleapp.feature.components.common.CustomAppBar
 import com.example.sampleapp.feature.components.common.CustomizedTextField
 import com.example.sampleapp.feature.components.common.DishRatingWidget
+import com.example.sampleapp.feature.components.common.LoadingWidget
 import com.example.sampleapp.feature.components.common.MenuIcon
 import com.example.sampleapp.feature.components.common.RoundedButton
 import com.example.sampleapp.navigation.AppRoute
 import com.example.sampleapp.ui.theme.backgroundColor
 import com.example.sampleapp.ui.theme.cardColor
+import kotlinx.coroutines.delay
 
 
 @Composable
 fun HomeScreen(navController: NavController) {
-    Scaffold(
-        topBar = {
-            CustomAppBar()
-        },
-        /*bottomBar = {
-            BottomAppBar(onIconTap = {item->
-                navController.navigate(item.route){
-                    popUpTo(navController.graph.startDestinationId) {
-                        saveState=true
+
+    val isLoading= remember {
+        mutableStateOf(true)
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        delay(1000)
+        isLoading.value=false
+    }
+
+    if(isLoading.value){
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            LoadingWidget()
+        }
+    }else{
+        Scaffold(
+            topBar = {
+                CustomAppBar()
+            },
+            /*bottomBar = {
+                BottomAppBar(onIconTap = {item->
+                    navController.navigate(item.route){
+                        popUpTo(navController.graph.startDestinationId) {
+                            saveState=true
+                        }
+                        launchSingleTop=true
+                        restoreState=true
                     }
-                    launchSingleTop=true
-                    restoreState=true
-                }
-            }, navController = navController)
-        },*/
-        containerColor = backgroundColor
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .padding(horizontal = 10.dp)
-                .then(Modifier.padding(padding))
-        ) {
-            Card(
+                }, navController = navController)
+            },*/
+            containerColor = backgroundColor
+        ) { padding ->
+            Column(
                 modifier = Modifier
-                    .heightIn(max = 200.dp, min = 150.dp)
-                    .padding(top = 10.dp)
-                    .fillMaxWidth(), colors = CardDefaults.cardColors().copy(containerColor = cardColor)
+                    .padding(horizontal = 10.dp)
+                    .then(Modifier.padding(padding))
             ) {
-
-                val constraint = ConstraintSet {
-                    val title = createRefFor("title")
-                    val discount = createRefFor("discount")
-                    val claimButton = createRefFor("claimButton")
-                    val dishIcon = createRefFor("dishIcon")
-
-                    constrain(title) {
-                        start.linkTo(parent.start, margin = 10.dp)
-                        top.linkTo(parent.top, margin = 10.dp)
-                        bottom.linkTo(discount.top)
-                    }
-
-                    constrain(discount) {
-                        start.linkTo(parent.start, margin = 10.dp)
-                        top.linkTo(title.bottom, margin = 20.dp)
-                        bottom.linkTo(claimButton.bottom)
-                    }
-
-                    constrain(claimButton) {
-                        start.linkTo(parent.start, margin = 5.dp)
-                        top.linkTo(discount.bottom, margin = 20.dp)
-                        bottom.linkTo(parent.bottom, margin = 10.dp)
-                    }
-
-                    constrain(dishIcon) {
-                        end.linkTo(parent.end, margin = 5.dp)
-                        top.linkTo(parent.top, margin = 20.dp)
-                        bottom.linkTo(parent.bottom)
-                    }
-
-                }
-
-                val text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
-                        append("up to 85")
-                    }
-                    withStyle(style = SpanStyle(color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Normal)) {
-                        append("%")
-                    }
-
-                }
-
-                ConstraintLayout(constraintSet = constraint, modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = "Get special discount",
-                        style = TextStyle(color = Color.White, fontSize = 18.sp),
-                        modifier = Modifier.layoutId("title"),
-                        fontFamily = FontFamily.Serif
-                    )
-                    Text(
-                        text = text,
-                        style = TextStyle(color = Color.White, fontSize = 25.sp),
-                        modifier = Modifier.layoutId("discount"),
-                        fontFamily = FontFamily.Serif
-                    )
-                    RoundedButton(
-                        onClick = { },
-                        text = "Claim voucher",
-                        modifier = Modifier.layoutId("claimButton"),
-                        backgroundColor = Color.White,
-                        contentColor = Color.Black
-                    )
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_diet_icon),
-                        contentDescription = "",
-                        modifier = Modifier
-                            .layoutId("dishIcon")
-                            .height(150.dp)
-                            .width(150.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                }
-
-            }
-            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                CustomizedTextField(
+                Card(
                     modifier = Modifier
+                        .heightIn(max = 200.dp, min = 150.dp)
                         .padding(top = 10.dp)
-                        .weight(0.7f),
-                    value = "",
-                    onValueChange = {
+                        .fillMaxWidth(), colors = CardDefaults.cardColors().copy(containerColor = cardColor)
+                ) {
 
-                    },
-                    hint = "Search your food.."
-                )
-                Spacer(modifier = Modifier.width(10.dp))
-                MenuIcon(menuIcon = R.drawable.ic_filter_icon, contentDescription = "filter", onClick = {
+                    val constraint = ConstraintSet {
+                        val title = createRefFor("title")
+                        val discount = createRefFor("discount")
+                        val claimButton = createRefFor("claimButton")
+                        val dishIcon = createRefFor("dishIcon")
 
-                })
-            }
+                        constrain(title) {
+                            start.linkTo(parent.start, margin = 10.dp)
+                            top.linkTo(parent.top, margin = 10.dp)
+                            bottom.linkTo(discount.top)
+                        }
 
-            Spacer(modifier = Modifier.height(20.dp))
+                        constrain(discount) {
+                            start.linkTo(parent.start, margin = 10.dp)
+                            top.linkTo(title.bottom, margin = 20.dp)
+                            bottom.linkTo(claimButton.bottom)
+                        }
 
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = "Popular food",
-                    style = TextStyle(color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold),
-                )
-                Text(
-                    text = "View all",
-                    style = TextStyle(color = Color.Gray, fontSize = 18.sp),
-                )
-            }
+                        constrain(claimButton) {
+                            start.linkTo(parent.start, margin = 5.dp)
+                            top.linkTo(discount.bottom, margin = 20.dp)
+                            bottom.linkTo(parent.bottom, margin = 10.dp)
+                        }
 
-            LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.fillMaxSize()) {
-                items(10) {
-                    FoodDishCard(onClick = {
-                        navController.navigate(AppRoute.FoodDetailScreenRoute)
-                    },onCartClick={
-                        navController.navigate(AppRoute.CartScreenRoute)
+                        constrain(dishIcon) {
+                            end.linkTo(parent.end, margin = 5.dp)
+                            top.linkTo(parent.top, margin = 20.dp)
+                            bottom.linkTo(parent.bottom)
+                        }
+
+                    }
+
+                    val text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)) {
+                            append("up to 85")
+                        }
+                        withStyle(style = SpanStyle(color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.Normal)) {
+                            append("%")
+                        }
+
+                    }
+
+                    ConstraintLayout(constraintSet = constraint, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = "Get special discount",
+                            style = TextStyle(color = Color.White, fontSize = 18.sp),
+                            modifier = Modifier.layoutId("title"),
+                            fontFamily = FontFamily.Serif
+                        )
+                        Text(
+                            text = text,
+                            style = TextStyle(color = Color.White, fontSize = 25.sp),
+                            modifier = Modifier.layoutId("discount"),
+                            fontFamily = FontFamily.Serif
+                        )
+                        RoundedButton(
+                            onClick = { },
+                            text = "Claim voucher",
+                            modifier = Modifier.layoutId("claimButton"),
+                            backgroundColor = Color.White,
+                            contentColor = Color.Black
+                        )
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_diet_icon),
+                            contentDescription = "",
+                            modifier = Modifier
+                                .layoutId("dishIcon")
+                                .height(150.dp)
+                                .width(150.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                    }
+
+                }
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    CustomizedTextField(
+                        modifier = Modifier
+                            .padding(top = 10.dp)
+                            .weight(0.7f),
+                        value = "",
+                        onValueChange = {
+
+                        },
+                        hint = "Search your food.."
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    MenuIcon(menuIcon = R.drawable.ic_filter_icon, contentDescription = "filter", onClick = {
+
                     })
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = "Popular food",
+                        style = TextStyle(color = Color.Black, fontSize = 20.sp, fontWeight = FontWeight.Bold),
+                    )
+                    Text(
+                        text = "View all",
+                        style = TextStyle(color = Color.Gray, fontSize = 18.sp),
+                    )
+                }
+
+                LazyVerticalGrid(columns = GridCells.Fixed(2), modifier = Modifier.fillMaxSize()) {
+                    items(10) {
+                        FoodDishCard(onClick = {
+                            navController.navigate(AppRoute.FoodDetailScreenRoute)
+                        },onCartClick={
+                            navController.navigate(AppRoute.CartScreenRoute)
+                        })
+                    }
                 }
             }
         }
     }
+
+
 }
 
 @Preview
@@ -302,14 +326,13 @@ fun HomeScreen() {
                 CustomizedTextField(
                     modifier = Modifier
                         .padding(top = 10.dp)
-                        .weight(0.7f),
+                        .weight(1f),
                     value = "",
                     onValueChange = {
 
                     },
                     hint = "Search your food.."
                 )
-                Spacer(modifier = Modifier.width(10.dp))
                 MenuIcon(menuIcon = R.drawable.ic_filter_icon, contentDescription = "filter", onClick = {
 
                 })

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,18 +20,26 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Shape
@@ -45,11 +54,14 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.sampleapp.R
+import com.example.sampleapp.ui.theme.alertConfirmColor
+import kotlinx.coroutines.delay
 
 @Composable
 fun MenuIcon(
@@ -67,7 +79,8 @@ fun MenuIcon(
         .clip(RoundedCornerShape(20.dp))
         .clickable {
             onClick.invoke()
-        }, shape = RoundedCornerShape(50.dp), color = menuColor) {
+        }, shape = RoundedCornerShape(50.dp), color = menuColor
+    ) {
         Image(painter = painterResource(id = menuIcon), contentDescription = contentDescription, contentScale = scaleType, colorFilter = colorFilter)
     }
 }
@@ -87,44 +100,42 @@ fun CustomizedTextField(
 
     val customShape: Shape = RoundedCornerShape(40.dp)
 
-    Box {
-        OutlinedTextField(modifier = modifier.border(BorderStroke(0.8.dp, color = Color.Gray), shape = customShape),
-            value = value,
-            onValueChange = onValueChange,
-            leadingIcon = leadingIcon,
-            placeholder = {
-                Text(text = hint, style = hintStyle)
-            },
-            shape = customShape,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = keyboardType,
-                imeAction = imeAction
-            ),
-            colors = TextFieldDefaults.colors(
+    OutlinedTextField(modifier = modifier.border(BorderStroke(0.8.dp, color = Color.Gray), shape = customShape),
+        value = value,
+        onValueChange = onValueChange,
+        leadingIcon = leadingIcon,
+        placeholder = {
+            Text(text = hint, style = hintStyle)
+        },
+        shape = customShape,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = keyboardType,
+            imeAction = imeAction
+        ),
+        colors = TextFieldDefaults.colors(
 
-            ),
-            keyboardActions = KeyboardActions(
-                onGo = {
-                    imeCallBack?.invoke()
-                },
-                onDone = {
-                    imeCallBack?.invoke()
-                },
-                onSearch = {
-                    imeCallBack?.invoke()
-                },
-                onNext = {
-                    imeCallBack?.invoke()
-                },
-                onSend = {
-                    imeCallBack?.invoke()
-                },
-                onPrevious = {
-                    imeCallBack?.invoke()
-                }
-            )
+        ),
+        keyboardActions = KeyboardActions(
+            onGo = {
+                imeCallBack?.invoke()
+            },
+            onDone = {
+                imeCallBack?.invoke()
+            },
+            onSearch = {
+                imeCallBack?.invoke()
+            },
+            onNext = {
+                imeCallBack?.invoke()
+            },
+            onSend = {
+                imeCallBack?.invoke()
+            },
+            onPrevious = {
+                imeCallBack?.invoke()
+            }
         )
-    }
+    )
 
 }
 
@@ -225,7 +236,6 @@ fun DishPriceIndicatorWidget(modifier: Modifier = Modifier, dishPrice: Double, f
 }
 
 
-
 @Composable
 fun ElevatedButtonWidget(
     modifier: Modifier = Modifier,
@@ -248,4 +258,76 @@ fun ElevatedButtonWidget(
             fontSize = fontSize
         )
     }
+}
+
+@Composable
+fun AlertDialogWidget(
+    modifier: Modifier = Modifier,
+    title: String,
+    confirmButtonTitle: String = "Yes",
+    cancelButtonTitle: String = "No",
+    description: String,
+    onConfirmTap: () -> Unit,
+    isShow: Boolean = false,
+    onDismissTap: () -> Unit
+) {
+    if (isShow) {
+        AlertDialog(
+            onDismissRequest = {
+                onDismissTap()
+            }, shape = RoundedCornerShape(15.dp),
+            icon = {
+                Icon(imageVector = Icons.Default.Notifications, contentDescription = "")
+            },
+            title = {
+                Text(text = title, style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, fontFamily = FontFamily.SansSerif))
+            },
+            text = {
+                Text(
+                    text = description,
+                    style = TextStyle(fontSize = 16.sp, fontWeight = FontWeight.Normal, fontFamily = FontFamily.SansSerif)
+                )
+            },
+            tonalElevation = 5.dp,
+            dismissButton = {
+                TextButton(onClick = {
+                    onDismissTap()
+                }, colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent), shape = RoundedCornerShape(10.dp)) {
+                    Text(text = cancelButtonTitle, style = TextStyle(color = alertConfirmColor, fontWeight = FontWeight.Bold))
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    onConfirmTap()
+                }, colors = ButtonDefaults.buttonColors(containerColor = alertConfirmColor), shape = RoundedCornerShape(10.dp)) {
+                    Text(text = confirmButtonTitle, style = TextStyle(color = Color.White, fontWeight = FontWeight.Bold))
+                }
+            }
+        )
+    }
+
+}
+
+@Preview
+@Composable
+fun LoadingWidget(modifier: Modifier = Modifier) {
+
+    val degree = produceState(initialValue = 0) {
+        while (true) {
+            delay(50)
+            value = (value + 10) % 360
+        }
+    }
+
+    Box(modifier = Modifier.size(70.dp), contentAlignment = Alignment.Center) {
+        Image(painter = painterResource(id = R.drawable.ic_loading_icon), contentDescription = "", modifier = Modifier
+            .fillMaxSize()
+            .rotate(degree.value.toFloat()))
+    }
+}
+
+
+@Composable
+fun Navigation(modifier: Modifier = Modifier) {
+    
 }

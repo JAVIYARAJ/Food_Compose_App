@@ -27,7 +27,6 @@ sealed class BottomAppBarItem(val route: AppRoute, val icon: Int, val label: Str
     data object Profile : BottomAppBarItem(route = AppRoute.ProfileRoute, icon = R.drawable.ic_profile_icon, label = "Profile")
 }
 
-
 @Composable
 fun BottomAppBar(modifier: Modifier = Modifier, onIconTap: (BottomAppBarItem) -> Unit,navController: NavController) {
 

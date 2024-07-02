@@ -3,6 +3,7 @@ package com.example.sampleapp.feature.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -22,7 +23,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,11 +42,22 @@ import androidx.compose.ui.unit.sp
 import com.example.sampleapp.R
 import com.example.sampleapp.feature.components.common.CustomizedTextField
 import com.example.sampleapp.feature.components.common.DishPriceIndicatorWidget
+import com.example.sampleapp.feature.components.common.LoadingWidget
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalLayoutApi::class)
 @Preview(showSystemUi = true)
 @Composable
 fun SearchScreen(modifier: Modifier = Modifier) {
+
+    val isLoading= remember {
+        mutableStateOf(true)
+    }
+
+    LaunchedEffect(key1 = Unit) {
+        delay(1000)
+        isLoading.value=false
+    }
 
     val dishType = listOf("All", "Salad", "Soup", "Main Dish", "Breakfast", "Launch", "Dinner")
 
@@ -70,98 +84,106 @@ fun SearchScreen(modifier: Modifier = Modifier) {
 
     val tabSelectedIndex = 0
 
-    Scaffold { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 15.dp)
-                .then(Modifier.padding(padding))
-        ) {
-
-            CustomizedTextField(
+    if(isLoading.value){
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            LoadingWidget()
+        }
+    }else{
+        Scaffold { padding ->
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                value = "",
-                onValueChange = {
-                },
-                leadingIcon = {
-                    Image(painter = painterResource(id = R.drawable.ic_search_icon), contentDescription = "", modifier = Modifier.size(25.dp))
-                },
-                hint = "Search ingredients"
-            )
+                    .fillMaxSize()
+                    .padding(horizontal = 15.dp)
+                    .then(Modifier.padding(padding))
+            ) {
+
+                CustomizedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp),
+                    value = "",
+                    onValueChange = {
+                    },
+                    leadingIcon = {
+                        Image(painter = painterResource(id = R.drawable.ic_search_icon), contentDescription = "", modifier = Modifier.size(25.dp))
+                    },
+                    hint = "Search ingredients"
+                )
 
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
 
-            Text(text = "Recommended for you", style = TextStyle(fontSize = 16.sp, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold))
-
-
-
-            Spacer(modifier = Modifier.height(20.dp))
-
-
-
-
-            FlowRow {
-                DishItemWidget(item = "Patato", itemIcon = R.drawable.potato)
-                DishItemWidget(item = "Onion", itemIcon = R.drawable.onion, isSelected = true)
-                DishItemWidget(item = "Carrot", itemIcon = R.drawable.carrot)
-                DishItemWidget(item = "Tomato", itemIcon = R.drawable.tomato)
-                DishItemWidget(item = "+10 More")
-            }
+                Text(text = "Recommended for you", style = TextStyle(fontSize = 16.sp, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold))
 
 
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
 
 
-            Text(text = "Choose type of dish", style = TextStyle(fontSize = 16.sp, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold))
+
+                FlowRow {
+                    DishItemWidget(item = "Patato", itemIcon = R.drawable.potato)
+                    DishItemWidget(item = "Onion", itemIcon = R.drawable.onion, isSelected = true)
+                    DishItemWidget(item = "Carrot", itemIcon = R.drawable.carrot)
+                    DishItemWidget(item = "Tomato", itemIcon = R.drawable.tomato)
+                    DishItemWidget(item = "+10 More")
+                }
 
 
-            Spacer(modifier = Modifier.height(10.dp))
+
+                Spacer(modifier = Modifier.height(20.dp))
 
 
 
-            LazyRow(modifier = Modifier.fillMaxWidth()) {
-                items(dishType.size) { index ->
-                    Column {
-                        Text(
-                            text = dishType[index],
-                            style = TextStyle(fontSize = 16.sp, fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.W500),
-                            modifier = Modifier.padding(5.dp),
-                            color = if (tabSelectedIndex == index) Color.Black else Color.Gray
-                        )
+                Text(text = "Choose type of dish", style = TextStyle(fontSize = 16.sp, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold))
+
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+
+
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    items(dishType.size) { index ->
+                        Column {
+                            Text(
+                                text = dishType[index],
+                                style = TextStyle(fontSize = 16.sp, fontFamily = FontFamily.SansSerif, fontWeight = FontWeight.W500),
+                                modifier = Modifier.padding(5.dp),
+                                color = if (tabSelectedIndex == index) Color.Black else Color.Gray
+                            )
+                        }
                     }
                 }
-            }
 
 
-            Spacer(modifier = Modifier.height(10.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-            LazyRow(modifier = Modifier.fillMaxWidth()) {
-                items(dishList.size) { index ->
-                    DishItemWidget(model = dishList[index], onLikeClick = {
-                        changeLike(index)
-                    })
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    items(dishList.size) { index ->
+                        DishItemWidget(model = dishList[index], onLikeClick = {
+                            changeLike(index)
+                        })
+                    }
                 }
-            }
 
 
-            Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(20.dp))
 
 
-            LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                items(2) {
-                    TopRatedDishWidget()
+                LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                    items(2) {
+                        TopRatedDishWidget()
+                    }
                 }
+
+
             }
-
-
         }
     }
+
+
 }
 
 
