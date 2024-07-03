@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
@@ -77,6 +78,8 @@ fun DishDetailScreen(modifier: Modifier = Modifier, navController: NavController
         isLoading.value = false
     }
 
+    val dishAmount=24
+
     if (isLoading.value) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             LoadingWidget()
@@ -107,19 +110,14 @@ fun DishDetailScreen(modifier: Modifier = Modifier, navController: NavController
                 }
             },
             bottomBar = {
-                Surface(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(120.dp)
-                        .padding(15.dp), color = Color.White, shape = RoundedCornerShape(10.dp)
-                ) {
+                BottomAppBar(containerColor = Color.White, tonalElevation = 10.dp, modifier = Modifier.clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(10.dp), verticalAlignment = Alignment.CenterVertically
                     ) {
                         Column {
-                            DishPriceIndicatorWidget(dishPrice = (count.intValue * 10).toDouble())
+                            DishPriceIndicatorWidget(dishPrice = (count.intValue * dishAmount).toDouble())
                             Text(text = "Total Price", style = TextStyle(fontSize = 18.sp, color = Color.Black))
                         }
                         Spacer(modifier = Modifier.weight(1f))
@@ -132,11 +130,11 @@ fun DishDetailScreen(modifier: Modifier = Modifier, navController: NavController
                         }
                     }
                 }
+
             }
         ) { padding ->
 
             LazyColumn(
-                flingBehavior = ScrollableDefaults.flingBehavior(),
                 modifier = Modifier
                     .padding(padding)
                     .then(Modifier.padding(horizontal = 15.dp))
@@ -205,7 +203,7 @@ fun DishDetailScreen(modifier: Modifier = Modifier, navController: NavController
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically
                     ) {
-                        DishPriceIndicatorWidget(dishPrice = 24.0, fontSize = 25.sp)
+                        DishPriceIndicatorWidget(dishPrice = dishAmount.toDouble(), fontSize = 25.sp)
                         Spacer(modifier = Modifier.weight(1f))
                         DishItemCounterWidget(onClick = { flag ->
                             if (flag) {

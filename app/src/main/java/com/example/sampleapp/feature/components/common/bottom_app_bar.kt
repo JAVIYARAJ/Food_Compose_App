@@ -61,7 +61,7 @@ fun BottomAppBar(modifier: Modifier = Modifier, onIconTap: (BottomAppBarItem) ->
                     unselectedIconColor = Color.Transparent,
                     indicatorColor = Color.Transparent,
                 ),
-                modifier = Modifier.clip(RoundedCornerShape(20.dp))
+                modifier = Modifier.clip(RoundedCornerShape(50.dp))
             )
         }
     }

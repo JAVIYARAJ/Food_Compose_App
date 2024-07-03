@@ -5,18 +5,23 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredHeightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Scaffold
@@ -29,6 +34,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -49,7 +55,7 @@ import com.example.sampleapp.feature.components.common.MenuIcon
 import com.example.sampleapp.ui.theme.backgroundColor
 
 @Composable
-fun PaymentScreen(modifier: Modifier = Modifier,navController: NavController) {
+fun PaymentScreen(modifier: Modifier = Modifier, navController: NavController) {
 
     Scaffold(
         topBar = {
@@ -76,37 +82,48 @@ fun PaymentScreen(modifier: Modifier = Modifier,navController: NavController) {
             }
         },
         bottomBar = {
-            Surface(color = backgroundColor, shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp), shadowElevation = 10.dp, tonalElevation = 10.dp) {
-                Column {
-                    CartPromoCodeWidget(modifier = Modifier.padding(10.dp))
+            BottomAppBar(
+                containerColor = Color.White,
+                tonalElevation = 10.dp,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .fillMaxHeight(0.4f) // Set the height to fit content
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    CartPromoCodeWidget()
                     Spacer(modifier = Modifier.height(20.dp))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(text = "Item total:", style = TextStyle(fontSize = 18.sp, color = Color.Gray))
                         Text(text = "$20", style = TextStyle(fontSize = 20.sp, color = Color.Gray))
-
                     }
                     Spacer(modifier = Modifier.height(10.dp))
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(text = "Delivery:", style = TextStyle(fontSize = 18.sp, color = Color.Gray))
                         Text(text = "Free", style = TextStyle(fontSize = 20.sp, color = Color.Gray))
-
                     }
 
                     Spacer(modifier = Modifier.height(20.dp))
                     ElevatedCard(
-                        shape = RoundedCornerShape(20.dp), modifier = Modifier
+                        shape = RoundedCornerShape(20.dp),
+                        modifier = Modifier
                             .fillMaxWidth()
-                            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp), colors = CardDefaults.cardColors(containerColor = Color.Black)
+                            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp),
+                        colors = CardDefaults.cardColors(containerColor = Color.Black)
                     ) {
                         Text(
                             text = "Place Order",
@@ -138,7 +155,7 @@ fun PaymentScreen(modifier: Modifier = Modifier,navController: NavController) {
 
 @Preview
 @Composable
-fun PaymentScreen(modifier: Modifier = Modifier) {
+fun PaymentScreenPreview(modifier: Modifier = Modifier) {
 
     Scaffold(
         topBar = {
@@ -150,7 +167,7 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 MenuIcon(menuIcon = R.drawable.ic_back_icon, contentDescription = "back_icon", onClick = {
-
+                    // navController.popBackStack()
                 })
                 Text(
                     text = "Your cart food",
@@ -165,7 +182,13 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
             }
         },
         bottomBar = {
-            Surface(color = backgroundColor, shape = RoundedCornerShape(topStart = 10.dp, topEnd = 10.dp), shadowElevation = 10.dp, tonalElevation = 10.dp) {
+            BottomAppBar(
+                containerColor = Color.White,
+                tonalElevation = 10.dp,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .fillMaxHeight(0.4f) // Set the height to fit content
+            ) {
                 Column {
                     CartPromoCodeWidget(modifier = Modifier.padding(10.dp))
                     Spacer(modifier = Modifier.height(20.dp))
@@ -209,6 +232,7 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
                     }
                 }
             }
+
         }
     ) { padding ->
         LazyColumn(
@@ -224,7 +248,6 @@ fun PaymentScreen(modifier: Modifier = Modifier) {
 
     }
 }
-
 
 @Preview
 @Composable
@@ -292,7 +315,7 @@ fun CartDishItemWidget(modifier: Modifier = Modifier) {
 @Composable
 fun CartPromoCodeWidget(modifier: Modifier = Modifier) {
 
-    val promoCodeValue= remember {
+    val promoCodeValue = remember {
         mutableStateOf("")
     }
 
@@ -310,7 +333,7 @@ fun CartPromoCodeWidget(modifier: Modifier = Modifier) {
             TextField(
                 value = promoCodeValue.value,
                 onValueChange = {
-                    promoCodeValue.value=it
+                    promoCodeValue.value = it
                 },
                 maxLines = 1,
                 modifier = Modifier
@@ -323,6 +346,7 @@ fun CartPromoCodeWidget(modifier: Modifier = Modifier) {
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent
                 ),
+                minLines = 1,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Text
                 ),
@@ -331,7 +355,7 @@ fun CartPromoCodeWidget(modifier: Modifier = Modifier) {
                         painter = painterResource(id = R.drawable.ic_coupon_icon),
                         contentDescription = "promoCode",
                         modifier = Modifier
-                            .size(45.dp)
+                            .size(35.dp)
                             .weight(0.3f),
                         contentScale = ContentScale.Fit,
                         colorFilter = ColorFilter.tint(color = Color.Gray)

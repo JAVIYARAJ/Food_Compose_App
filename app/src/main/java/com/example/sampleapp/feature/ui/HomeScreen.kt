@@ -1,5 +1,5 @@
 package com.example.sampleapp.feature.ui
-import android.util.Log
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -47,7 +48,6 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.layoutId
 import androidx.navigation.NavController
 import com.example.sampleapp.R
-import com.example.sampleapp.feature.components.common.BottomAppBar
 import com.example.sampleapp.feature.components.common.CustomAppBar
 import com.example.sampleapp.feature.components.common.CustomizedTextField
 import com.example.sampleapp.feature.components.common.DishRatingWidget
@@ -59,24 +59,34 @@ import com.example.sampleapp.ui.theme.backgroundColor
 import com.example.sampleapp.ui.theme.cardColor
 import kotlinx.coroutines.delay
 
-
 @Composable
 fun HomeScreen(navController: NavController) {
 
-    val isLoading= remember {
+    val isLoading = remember {
         mutableStateOf(true)
     }
 
     LaunchedEffect(key1 = Unit) {
         delay(1000)
-        isLoading.value=false
+        isLoading.value = false
     }
 
-    if(isLoading.value){
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+    val foodCategoryList = listOf(
+        FoodCategory(name = "Pizza", icon = R.drawable.ic_pizza_icon),
+        FoodCategory(name = "Burger", icon = R.drawable.burger),
+        FoodCategory(name = "Sushi", icon = R.drawable.sushi),
+        FoodCategory(name = "Ramen", icon = R.drawable.ramen),
+        FoodCategory(name = "Pizza", icon = R.drawable.ic_pizza_icon),
+        FoodCategory(name = "Burger", icon = R.drawable.burger),
+        FoodCategory(name = "Sushi", icon = R.drawable.sushi),
+        FoodCategory(name = "Ramen", icon = R.drawable.ramen)
+    )
+
+    if (isLoading.value) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             LoadingWidget()
         }
-    }else{
+    } else {
         Scaffold(
             topBar = {
                 CustomAppBar()
@@ -199,6 +209,28 @@ fun HomeScreen(navController: NavController) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+
+                    items(foodCategoryList.size) { index ->
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 8.dp)) {
+                            Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                                Image(
+                                    painter = painterResource(id = foodCategoryList[index].icon),
+                                    contentDescription = "",
+                                    modifier = Modifier.size(45.dp)
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = foodCategoryList[index].name,
+                                    style = TextStyle(fontSize = 16.sp, color = Color.Black, fontFamily = FontFamily.SansSerif)
+                                )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(20.dp))
+
                 Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Popular food",
@@ -214,7 +246,7 @@ fun HomeScreen(navController: NavController) {
                     items(10) {
                         FoodDishCard(onClick = {
                             navController.navigate(AppRoute.FoodDetailScreenRoute)
-                        },onCartClick={
+                        }, onCartClick = {
                             navController.navigate(AppRoute.CartScreenRoute)
                         })
                     }
@@ -331,11 +363,28 @@ fun HomeScreen() {
                     onValueChange = {
 
                     },
-                    hint = "Search your food.."
+                    hint = "Search your food..",
+                    leadingIcon = {
+                        Image(painter = painterResource(id = R.drawable.ic_search_icon), contentDescription = "", modifier = Modifier.size(20.dp))
+                    }
                 )
                 MenuIcon(menuIcon = R.drawable.ic_filter_icon, contentDescription = "filter", onClick = {
 
                 })
+            }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+            LazyRow(modifier = Modifier.fillMaxWidth()) {
+                items(3) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(horizontal = 5.dp)) {
+                        Column(verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                            Image(painter = painterResource(id = R.drawable.ic_pizza_icon), contentDescription = "")
+                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(text = "Pizza", style = TextStyle(fontSize = 14.sp, color = Color.Black, fontFamily = FontFamily.SansSerif))
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(20.dp))
@@ -355,7 +404,7 @@ fun HomeScreen() {
                 items(10) {
                     FoodDishCard(onClick = {
 
-                    },onCartClick={
+                    }, onCartClick = {
 
                     })
                 }
@@ -364,9 +413,8 @@ fun HomeScreen() {
     }
 }
 
-
 @Composable
-fun FoodDishCard(modifier: Modifier = Modifier,onClick: () -> Unit,onCartClick: () -> Unit) {
+fun FoodDishCard(modifier: Modifier = Modifier, onClick: () -> Unit, onCartClick: () -> Unit) {
     Surface(
         color = Color.White, shape = RoundedCornerShape(20.dp), modifier = Modifier
             .padding(0.dp)
@@ -480,3 +528,8 @@ fun FoodDishCard(modifier: Modifier = Modifier,onClick: () -> Unit,onCartClick: 
 
     }
 }
+
+data class FoodCategory(
+    val name: String,
+    val icon: Int
+)
