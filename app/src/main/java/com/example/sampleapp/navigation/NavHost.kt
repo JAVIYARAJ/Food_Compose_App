@@ -14,11 +14,18 @@ import com.example.sampleapp.feature.ui.PaymentScreen
 import com.example.sampleapp.feature.ui.ProfileScreen
 import com.example.sampleapp.feature.ui.RestaurantScreen
 import com.example.sampleapp.feature.ui.SearchScreen
+import com.example.sampleapp.feature.ui.WelcomeScreen
 import kotlinx.serialization.Serializable
 
 @Composable
 fun MainNavGraph(modifier: Modifier = Modifier, controller: NavHostController) {
-    NavHost(navController = controller, startDestination = AppRoute.DashboardRoute) {
+    NavHost(navController = controller, startDestination = AppRoute.WelcomeScreenRoute) {
+
+        composable<AppRoute.WelcomeScreenRoute> {
+            WelcomeScreen(navController = controller)
+
+        }
+
         composable<AppRoute.DashboardRoute> {
             DashboardScreen(mainController = controller)
         }
@@ -55,6 +62,9 @@ fun HomeNavGraph(modifier: Modifier = Modifier, homeController: NavHostControlle
 sealed class AppRoute() {
     @Serializable
     data object SplashScreenRoute : AppRoute()
+
+    @Serializable
+    data object WelcomeScreenRoute : AppRoute()
 
     @Serializable
     data object DashboardRoute : AppRoute()
