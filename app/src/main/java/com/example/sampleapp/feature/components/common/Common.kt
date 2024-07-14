@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -58,6 +59,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -100,10 +102,12 @@ fun CustomizedTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     imeAction: ImeAction = ImeAction.Go,
     keyboardType: KeyboardType = KeyboardType.Text,
-    imeCallBack: (() -> Unit)? = null
+    imeCallBack: (() -> Unit)? = null,
+    radius: Dp=40.dp,
+    trailingIcon: @Composable (() -> Unit)? = null
 ) {
 
-    val customShape: Shape = RoundedCornerShape(40.dp)
+    val customShape: Shape = RoundedCornerShape(radius)
 
     OutlinedTextField(modifier = modifier.border(BorderStroke(0.8.dp, color = Color.Gray), shape = customShape),
         value = value,
@@ -118,7 +122,12 @@ fun CustomizedTextField(
             imeAction = imeAction
         ),
         colors = TextFieldDefaults.colors(
-
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            focusedIndicatorColor = Color.White,
+            unfocusedIndicatorColor = Color.White,
+            focusedTrailingIconColor = Color.Black,
+            unfocusedTrailingIconColor = Color.Black
         ),
         keyboardActions = KeyboardActions(
             onGo = {
@@ -139,9 +148,9 @@ fun CustomizedTextField(
             onPrevious = {
                 imeCallBack?.invoke()
             }
-        )
+        ),
+        trailingIcon = trailingIcon
     )
-
 }
 
 @Composable
@@ -179,24 +188,23 @@ fun CustomAppBar(modifier: Modifier = Modifier) {
         modifier = modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .padding(all = 10.dp)
+            .padding(all = 10.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        MenuIcon(menuIcon = R.drawable.ic_menu_icon, contentDescription = "menu_icon", onClick = {
-
-        })
-        Column(modifier = Modifier.weight(0.6f), horizontalAlignment = Alignment.CenterHorizontally) {
-            Text(text = "Location", style = TextStyle(color = Color.Gray, fontSize = 16.sp, textAlign = TextAlign.Center))
-            Spacer(modifier = Modifier.height(5.dp))
+        Column(modifier = Modifier.weight(1f)) {
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_location_icon),
+                    painter = painterResource(id = R.drawable.ic_airplane_icon),
                     contentDescription = "menu_icon",
-                    contentScale = ContentScale.Inside
+                    contentScale = ContentScale.FillBounds,
+                    modifier = Modifier.size(35.dp)
                 )
-                Text(text = "Ahmedabad", style = TextStyle(color = Color.Gray, fontSize = 16.sp))
+                Text(text = "Esparkbiz", style = TextStyle(color = Color.Gray, fontSize = 18.sp, fontWeight = FontWeight.Bold))
             }
+            Text(text = "Science city,Near Krishan farm, Ahmedabad 362610", style = TextStyle(color = Color.Gray, fontSize = 16.sp, textAlign = TextAlign.Center), maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Spacer(modifier = Modifier.height(5.dp))
         }
-        MenuIcon(menuIcon = R.drawable.ic_notification_icon, contentDescription = "notification_icon", onClick = {
+        MenuIcon(menuIcon = R.drawable.ic_profile_icon, contentDescription = "notification_icon", onClick = {
 
         })
     }
@@ -337,8 +345,17 @@ fun LoadingWidget(modifier: Modifier = Modifier) {
 fun NavigationDrawerWidget(modifier: Modifier = Modifier) {
 
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-
-    ModalNavigationDrawer(drawerContent = {}, drawerState = drawerState) {
+    
+    ModalNavigationDrawer(drawerContent = {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Box(modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(0.3f)
+                .padding(horizontal = 50.dp)) {
+                Image(painter = painterResource(id = R.drawable.ic_burger_dish_icon), contentDescription = "", contentScale = ContentScale.FillBounds, modifier = Modifier.fillMaxSize())
+            }
+        }
+    }, drawerState = drawerState) {
 
     }
 }

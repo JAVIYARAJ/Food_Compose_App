@@ -74,4 +74,10 @@ dependencies {
 
     implementation(libs.androidx.foundation)
 
+    implementation (libs.accompanist.navigation.animation)
+
+    implementation (libs.androidx.material.icons.extended)
+
+
+
 }

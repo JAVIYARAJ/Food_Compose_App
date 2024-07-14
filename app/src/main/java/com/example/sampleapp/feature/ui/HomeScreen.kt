@@ -2,6 +2,7 @@ package com.example.sampleapp.feature.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,13 +19,22 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,13 +42,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +68,7 @@ import com.example.sampleapp.feature.components.common.LoadingWidget
 import com.example.sampleapp.feature.components.common.MenuIcon
 import com.example.sampleapp.feature.components.common.RoundedButton
 import com.example.sampleapp.navigation.AppRoute
+import com.example.sampleapp.ui.theme.alertConfirmColor
 import com.example.sampleapp.ui.theme.backgroundColor
 import com.example.sampleapp.ui.theme.cardColor
 import kotlinx.coroutines.delay
@@ -70,6 +84,8 @@ fun HomeScreen(navController: NavController) {
         delay(1000)
         isLoading.value = false
     }
+
+    val searchQuery= listOf("Pizza","Burger","Sushi","Ramen","Cake","Sweet","Biryani","Pasta")
 
     val foodCategoryList = listOf(
         FoodCategory(name = "Pizza", icon = R.drawable.ic_pizza_icon),
@@ -87,21 +103,27 @@ fun HomeScreen(navController: NavController) {
             LoadingWidget()
         }
     } else {
+        val focusManager= LocalFocusManager.current
+
+        val query = remember {
+            mutableIntStateOf(0)
+        }
+
+        LaunchedEffect(key1 = Unit) {
+            while (true){
+                delay(1500)
+                if(query.intValue==searchQuery.size-1){
+                    query.intValue=0
+                }else{
+                    query.intValue++
+                }
+            }
+        }
+
         Scaffold(
             topBar = {
                 CustomAppBar()
             },
-            /*bottomBar = {
-                BottomAppBar(onIconTap = {item->
-                    navController.navigate(item.route){
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState=true
-                        }
-                        launchSingleTop=true
-                        restoreState=true
-                    }
-                }, navController = navController)
-            },*/
             containerColor = backgroundColor
         ) { padding ->
             Column(
@@ -109,6 +131,45 @@ fun HomeScreen(navController: NavController) {
                     .padding(horizontal = 10.dp)
                     .then(Modifier.padding(padding))
             ) {
+                CustomizedTextField(
+                    modifier = Modifier
+                        .padding(top = 10.dp)
+                        .fillMaxWidth(),
+                    value = "",
+                    onValueChange = {
+
+                    },
+                    hint = "Search for '${searchQuery[query.intValue]}'",
+                    radius = 8.dp,
+                    imeCallBack = {
+                        focusManager.clearFocus()
+                    },
+                    trailingIcon = {
+                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "Clear text",
+                                modifier = Modifier
+                                    .size(25.dp)
+                                    .clip(RoundedCornerShape(40.dp))
+                                    .clickable { }
+                            )
+                            Box(modifier = Modifier.height(35.dp), contentAlignment = Alignment.Center) {
+                                VerticalDivider(thickness = 1.dp)
+                            }
+                            Icon(
+                                imageVector = Icons.Filled.Mic,
+                                contentDescription = "Clear text",
+                                modifier = Modifier.padding(end = 5.dp)
+                                    .size(25.dp)
+                                    .clip(RoundedCornerShape(40.dp))
+                                    .clickable { },
+                                tint = alertConfirmColor
+                            )
+                        }
+                    }
+                )
+                Spacer(modifier = Modifier.height(10.dp))
                 Card(
                     modifier = Modifier
                         .heightIn(max = 200.dp, min = 150.dp)
@@ -190,25 +251,7 @@ fun HomeScreen(navController: NavController) {
                     }
 
                 }
-                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    CustomizedTextField(
-                        modifier = Modifier
-                            .padding(top = 10.dp)
-                            .weight(0.7f),
-                        value = "",
-                        onValueChange = {
-
-                        },
-                        hint = "Search your food.."
-                    )
-                    Spacer(modifier = Modifier.width(10.dp))
-                    MenuIcon(menuIcon = R.drawable.ic_filter_icon, contentDescription = "filter", onClick = {
-
-                    })
-                }
-
                 Spacer(modifier = Modifier.height(20.dp))
-
                 LazyRow(modifier = Modifier.fillMaxWidth()) {
 
                     items(foodCategoryList.size) { index ->

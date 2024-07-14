@@ -25,7 +25,5 @@ fun DashboardScreen(modifier: Modifier = Modifier,mainController: NavHostControl
                 restoreState=true
             }
         }, navController =homeController)
-    }) {
-        HomeNavGraph(homeController = homeController, mainNavController = mainController)
-    }
+    }) { HomeNavGraph(homeController = homeController, mainNavController = mainController) }
 }

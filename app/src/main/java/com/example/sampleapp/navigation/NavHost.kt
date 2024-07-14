@@ -2,8 +2,11 @@
 
 package com.example.sampleapp.navigation
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,7 +22,16 @@ import kotlinx.serialization.Serializable
 
 @Composable
 fun MainNavGraph(modifier: Modifier = Modifier, controller: NavHostController) {
-    NavHost(navController = controller, startDestination = AppRoute.WelcomeScreenRoute) {
+
+    /*pointerInput for telling device where i perform something touch event*/
+    /*detectTapGestures for telling device when i perform something*/
+    val focusManager= LocalFocusManager.current
+
+    NavHost(navController = controller, startDestination = AppRoute.WelcomeScreenRoute, modifier = Modifier.pointerInput(key1 = Unit){
+        detectTapGestures(onTap = {
+            focusManager.clearFocus()
+        })
+    }) {
 
         composable<AppRoute.WelcomeScreenRoute> {
             WelcomeScreen(navController = controller)
